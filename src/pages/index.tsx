@@ -5,19 +5,34 @@ const Home = () => {
   const [downloadFile, setDownloadFile] = useState("");
   const [error, setError] = useState("");
 
-  const convertToMP3 = (url: string) => {
+  const convertToMP3 = async (url: string) => {
     if (error) setError("");
     if (!url || (!url.includes("youtube.com/") && !url.includes("youtu.be/"))) {
       setError("Please enter a valid YouTube URL!");
       return;
     }
-    // TODO: implement the conversion logic
-    setDownloadFile("video.mp3");
+    try {
+      const response = await fetch(`/api/convert?url=${url}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setDownloadFile(data.filePath);
+      } else {
+        setError(data.error);
+      }
+    } catch (error) {
+      console.error(error);
+      setError("Oops something went wrong, please try again later!");
+    }
   };
 
   const downloadMP3 = (downloadFile: string) => {
     // TODO: implement the download logic
     if (!downloadFile) return;
+    const link = document.createElement("a");
+    link.href = downloadFile;
+    link.download = "audio.mp3";
+    link.click();
   };
 
   return (
