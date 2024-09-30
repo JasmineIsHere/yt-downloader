@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import ytdl from "ytdl-core";
+import ytdl from "@distube/ytdl-core";
 
 export default async function handler(
   req: NextApiRequest,
