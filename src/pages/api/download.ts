@@ -4,7 +4,7 @@ import * as fs from "fs";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { url, type } = req.query;
-  const filter = type === "audio" ? "audio" : "audioandvideo";
+  const filter = type === "audio" ? "audioonly" : "audioandvideo";
   if (
     !url ||
     typeof url !== "string" ||

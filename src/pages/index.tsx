@@ -53,6 +53,7 @@ const Home = () => {
       a.href = filePath;
       a.download = filePath;
       a.click();
+      // TODO: delete the file after download
       setFilePath("");
     }
   }, [filePath]);
