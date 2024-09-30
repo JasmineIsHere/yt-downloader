@@ -1,11 +1,15 @@
-import { useState } from "react";
+/* eslint-disable @next/next/no-img-element */
+import { useEffect, useState } from "react";
 
 const Home = () => {
   const [url, setUrl] = useState("");
-  const [downloadFile, setDownloadFile] = useState("");
+  const [downloadUrl, setDownloadUrl] = useState("");
+  const [title, setTitle] = useState("");
+  const [thumbnail, setThumbnail] = useState("");
+  const [filePath, setFilePath] = useState("");
   const [error, setError] = useState("");
 
-  const convertToMP3 = async (url: string) => {
+  const getDetails = async (url: string) => {
     if (error) setError("");
     if (!url || (!url.includes("youtube.com/") && !url.includes("youtu.be/"))) {
       setError("Please enter a valid YouTube URL!");
@@ -14,32 +18,50 @@ const Home = () => {
     try {
       const response = await fetch(`/api/convert?url=${url}`);
       const data = await response.json();
-
       if (response.ok) {
-        setDownloadFile(data.filePath);
+        setTitle(data.title);
+        setThumbnail(data.thumbnail);
+        setDownloadUrl(url);
       } else {
         setError(data.error);
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       setError("Oops something went wrong, please try again later!");
     }
   };
 
-  const downloadMP3 = (downloadFile: string) => {
-    // TODO: implement the download logic
-    if (!downloadFile) return;
-    const link = document.createElement("a");
-    link.href = downloadFile;
-    link.download = "audio.mp3";
-    link.click();
+  const download = async (type: string) => {
+    try {
+      setFilePath("");
+      const response = await fetch(
+        `/api/download?url=${downloadUrl}&type=${type}`
+      );
+      const data = await response.json();
+      if (response.ok) {
+        setFilePath(data.replace("public/", ""));
+      } else {
+        setError(data.error);
+      }
+    } catch {
+      setError("Oops something went wrong, please try again later!");
+    }
   };
+
+  useEffect(() => {
+    if (filePath) {
+      const a = document.createElement("a");
+      a.href = filePath;
+      a.download = filePath;
+      a.click();
+      setFilePath("");
+    }
+  }, [filePath]);
 
   return (
     <div className="mt-[10%]">
       <div className="flex items-center justify-center flex-col my-auto gap-6">
         <h1 className="text-5xl font-semibold text-center">
-          YouTube to MP3 converter
+          YouTube Downloader
         </h1>
         <input
           aria-label="YouTube url"
@@ -48,20 +70,43 @@ const Home = () => {
           placeholder="Paste YouTube link here"
           onChange={(e) => setUrl(e.target.value)}
         />
+        <div
+          className="flex flex-col items-center justify-center"
+          hidden={!title}
+        >
+          <h1 className="text-lg">{title}</h1>
+          {thumbnail && (
+            <img
+              className="mt-2 shadow-md"
+              src={thumbnail}
+              alt="thumbnail"
+              width={200}
+              height={200}
+            />
+          )}
+        </div>
         <button
           aria-label="convert"
           className="bg-[#FF0101] text-white rounded-2xl px-6 py-2 text-xl shadow-md"
-          onClick={() => convertToMP3(url)}
+          onClick={() => getDetails(url)}
         >
           Convert
         </button>
         <button
           aria-label="download"
           className="bg-white text-[#FF0101] rounded-2xl px-6 py-2 text-xl shadow-md disabled:hidden"
-          disabled={!downloadFile}
-          onClick={() => downloadMP3(downloadFile)}
+          disabled={!title}
+          onClick={() => download("video")}
         >
-          Download
+          Download MP4
+        </button>
+        <button
+          aria-label="download"
+          className="bg-white text-[#FF0101] rounded-2xl px-6 py-2 text-xl shadow-md disabled:hidden"
+          disabled={!title}
+          onClick={() => download("audio")}
+        >
+          Download MP3
         </button>
         <div aria-label="error message" hidden={!error}>
           {error}

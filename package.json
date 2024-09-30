@@ -9,14 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@distube/ytdl-core": "^4.14.4",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "fluent-ffmpeg": "^2.1.3",
     "next": "14.2.13",
     "react": "^18",
     "react-dom": "^18",
-    "yt-downloader": "file:",
-    "ytdl-core": "^4.11.5"
+    "yt-downloader": "file:"
   },
   "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.26",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
