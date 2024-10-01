@@ -20,7 +20,6 @@ export default async function handler(
     console.log("cookies:", cookies);
     const agent = ytdl.createAgent(cookies);
     const videoInfo = await ytdl.getBasicInfo(url, {agent});
-    console.log("videoInfo:", videoInfo);
     const title = videoInfo.videoDetails.title;
     const thumbnail = videoInfo.videoDetails.thumbnails[0].url;
     res.status(200).json({ title, thumbnail });
