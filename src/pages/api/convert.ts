@@ -22,7 +22,9 @@ export default async function handler(
     const thumbnail = videoInfo.videoDetails.thumbnails[0].url;
     res.status(200).json({ title, thumbnail });
   } catch (error) {
-    res.status(500).json({ error: "Error converting video, please try again later" });
+    res.status(500).json({ error: "Error converting video, please try again later",
+      description: error
+     });
     console.log("error:", error)
   }
 }
