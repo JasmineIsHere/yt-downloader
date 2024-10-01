@@ -38,6 +38,7 @@ const Home = () => {
       );
       const data = await response.json();
       if (response.ok) {
+        console.log("data: ", data, "\n", data.replace("public/", ""));
         setFilePath(data.replace("public/", ""));
       } else {
         setError(data.error);
@@ -49,11 +50,11 @@ const Home = () => {
 
   useEffect(() => {
     if (filePath) {
+      console.log(filePath);
       const a = document.createElement("a");
       a.href = filePath;
       a.download = filePath;
       a.click();
-      // TODO: delete the file after download
       setFilePath("");
     }
   }, [filePath]);
