@@ -24,10 +24,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     .on("finish", () => {
       res.status(200).json(outputPath);
     })
-    .on("error", () => {
-      res.status(500).json({ error: "Error downloading video" });
+    .on("error", (error) => {
+      res.status(500).json({ error: "Error downloading video", description: error });
     });
-  } catch { 
-    res.status(500).json({ error: "Error downloading video" });
+  } catch (error) { 
+    res.status(500).json({ error: "Error downloading video", description: error });
   }
 }
