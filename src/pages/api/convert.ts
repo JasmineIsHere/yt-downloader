@@ -17,10 +17,12 @@ export default async function handler(
   }
   try {
     const videoInfo = await ytdl.getBasicInfo(url);
+    console.log("videoInfo:", videoInfo);
     const title = videoInfo.videoDetails.title;
     const thumbnail = videoInfo.videoDetails.thumbnails[0].url;
     res.status(200).json({ title, thumbnail });
-  } catch {
-    res.status(500).json({ error: "Please provide a valid YouTube URL" });
+  } catch (error) {
+    res.status(500).json({ error: "Error converting video, please try again later" });
+    console.log("error:", error)
   }
 }
