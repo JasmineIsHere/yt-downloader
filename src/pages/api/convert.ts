@@ -16,10 +16,9 @@ export default async function handler(
     return;
   }
   try {
-    const cookies = JSON.parse(process.env.COOKIES || "[]");
-    console.log("cookies:", cookies);
-    const agent = ytdl.createAgent(cookies);
-    const videoInfo = await ytdl.getBasicInfo(url, {agent});
+    const cookies = process.env.COOKIES!.replace(/\\"/g, '"');
+    const agent = ytdl.createAgent(JSON.parse(cookies || "[]"));
+    const videoInfo = await ytdl.getBasicInfo(url, { agent });
     const title = videoInfo.videoDetails.title;
     const thumbnail = videoInfo.videoDetails.thumbnails[0].url;
     res.status(200).json({ title, thumbnail });
