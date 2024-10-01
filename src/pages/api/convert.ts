@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import ytdl from "@distube/ytdl-core";
+import { COOKIES } from "@/utils/jsonParser";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,8 +17,7 @@ export default async function handler(
     return;
   }
   try {
-    const cookies = process.env.COOKIES!.replace(/\\"/g, '"');
-    const agent = ytdl.createAgent(JSON.parse(cookies || "[]"));
+    const agent = ytdl.createAgent(COOKIES);
     const videoInfo = await ytdl.getBasicInfo(url, { agent });
     const title = videoInfo.videoDetails.title;
     const thumbnail = videoInfo.videoDetails.thumbnails[0].url;

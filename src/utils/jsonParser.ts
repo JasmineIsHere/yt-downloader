@@ -1,0 +1,1 @@
+export const COOKIES = JSON.parse(process.env.COOKIES!.replace(/\\"/g, '"') || "[]");
