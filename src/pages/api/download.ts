@@ -22,7 +22,7 @@ export default async function handler(
       const agent = ytdl.createAgent(COOKIES);
 
       res.writeHead(200, {
-            "Content-Type": type === "audio" ? "audio/mp3" : "video/mp4",
+            "Content-Type": type === "audio" ? "audio/mpeg" : "video/mp4",
             // "Content-Length": stat.size,
           });
       ytdl(url, { filter: filter, agent })
