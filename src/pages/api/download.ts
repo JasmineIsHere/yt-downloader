@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import ytdl from "@distube/ytdl-core";
-import * as fs from "fs";
 import { COOKIES } from "@/utils/jsonParser";
 import path from "path";
 
@@ -29,16 +28,21 @@ export default async function handler(
       console.log("outputpath:", outputPath);
       const agent = ytdl.createAgent(COOKIES);
 
+      res.writeHead(200, {
+            "Content-Type": type === "audio" ? "audio/mp3" : "video/mp4",
+            // "Content-Length": stat.size,
+          });
       ytdl(url, { filter: filter, agent })
-        .pipe(fs.createWriteStream(outputPath))
+        .pipe(res)
         .on("finish", () => {
           console.log("Write finished")
-          const stat = fs.statSync(outputPath);
-          res.writeHead(200, {
-            "Content-Type": type === "audio" ? "audio/mp3" : "video/mp4",
-            "Content-Length": stat.size,
-          });
-          fs.createReadStream(outputPath).pipe(res);
+          // const stat = fs.statSync(outputPath);
+          // res.writeHead(200, {
+          //   "Content-Type": type === "audio" ? "audio/mp3" : "video/mp4",
+          //   "Content-Length": stat.size,
+          // });
+          // fs.createReadStream(outputPath).pipe(res);
+          res.end();
         })
         .on("error", (error) => {
           res
