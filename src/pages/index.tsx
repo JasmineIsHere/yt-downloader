@@ -31,6 +31,7 @@ const Home = () => {
   };
 
   const download = async (type: string) => {
+    if (error) setError("");
     try {
       // setFilePath("");
       const response = await fetch(

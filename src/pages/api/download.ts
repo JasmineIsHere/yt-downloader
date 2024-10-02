@@ -23,7 +23,7 @@ export default async function handler(
     try {
       const outputPath = `${path.join(
         process.cwd(),
-        "public",
+        "tmp",
         type === "audio" ? "audio.mp3" : "video.mp4"
       )}`;
       console.log("outputpath:", outputPath);
