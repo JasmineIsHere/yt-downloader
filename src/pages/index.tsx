@@ -38,8 +38,7 @@ const Home = () => {
       );
       const data = await response.json();
       if (response.ok) {
-        console.log("data: ", data, "\n", data.replace("public/", ""));
-        setFilePath(data.replace("public/", ""));
+        setFilePath(data);
       } else {
         setError(data.error);
       }
