@@ -32,6 +32,7 @@ export default async function handler(
       ytdl(url, { filter: filter, agent })
         .pipe(fs.createWriteStream(outputPath))
         .on("finish", () => {
+          console.log("Write finished")
           const stat = fs.statSync(outputPath);
           res.writeHead(200, {
             "Content-Type": type === "audio" ? "audio/mp3" : "video/mp4",
