@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import ytdl from "@distube/ytdl-core";
 import { COOKIES } from "@/utils/jsonParser";
-import path from "path";
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,12 +19,6 @@ export default async function handler(
   }
 
     try {
-      const outputPath = `${path.join(
-        process.cwd(),
-        "tmp",
-        type === "audio" ? "audio.mp3" : "video.mp4"
-      )}`;
-      console.log("outputpath:", outputPath);
       const agent = ytdl.createAgent(COOKIES);
 
       res.writeHead(200, {
@@ -35,13 +28,6 @@ export default async function handler(
       ytdl(url, { filter: filter, agent })
         .pipe(res)
         .on("finish", () => {
-          console.log("Write finished")
-          // const stat = fs.statSync(outputPath);
-          // res.writeHead(200, {
-          //   "Content-Type": type === "audio" ? "audio/mp3" : "video/mp4",
-          //   "Content-Length": stat.size,
-          // });
-          // fs.createReadStream(outputPath).pipe(res);
           res.end();
         })
         .on("error", (error) => {

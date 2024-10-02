@@ -6,7 +6,6 @@ const Home = () => {
   const [downloadUrl, setDownloadUrl] = useState("");
   const [title, setTitle] = useState("");
   const [thumbnail, setThumbnail] = useState("");
-  // const [filePath, setFilePath] = useState("");
   const [error, setError] = useState("");
 
   const getDetails = async (url: string) => {
@@ -22,7 +21,6 @@ const Home = () => {
         setTitle(data.title);
         setThumbnail(data.thumbnail);
         setDownloadUrl(url);
-        // console.log("videoInfo:", data.videoInfo);
       } else {
         setError(data.error);
       }
@@ -34,13 +32,13 @@ const Home = () => {
   const download = async (type: string) => {
     if (error) setError("");
     try {
-      // setFilePath("");
       const response = await fetch(
         `/api/download?url=${downloadUrl}&type=${type}`
       );
       if (response.ok) {
         console.log("response:", response);
         const blob = await response.blob();
+        console.log(blob.size, " blob:", blob);
         const url = window.URL.createObjectURL(blob);
         console.log("blob url:", url);
         const a = document.createElement("a");
@@ -59,17 +57,6 @@ const Home = () => {
       setError("Oops something went wrong, please try again later!");
     }
   };
-
-  // useEffect(() => {
-  //   if (filePath) {
-  //     console.log(filePath);
-  //     const a = document.createElement("a");
-  //     a.href = filePath;
-  //     a.download = filePath;
-  //     a.click();
-  //     setFilePath("");
-  //   }
-  // }, [filePath]);
 
   return (
     <div className="mt-[10%]">
