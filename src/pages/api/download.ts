@@ -7,7 +7,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { url, type } = req.query;
-  const filter = type === "audio" ? "audioonly" : "audioandvideo";
+  const filter = type === "audio" ? "audio" : "audioandvideo";
 
   if (
     !url ||
