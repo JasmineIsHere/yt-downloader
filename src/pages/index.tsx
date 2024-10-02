@@ -33,10 +33,12 @@ const Home = () => {
     if (error) setError("");
     try {
       const response = await fetch(
-        `/api/download?url=${downloadUrl}&type=${type}`
+        `/api/download?url=${downloadUrl}&type=${type}`, {
+          method: "POST",
+        }
       );
       if (response.ok) {
-        console.log("response:", response);
+        console.log("response ok: ", response);
         const blob = await response.blob();
         console.log(blob.size, " blob:", blob);
         const url = window.URL.createObjectURL(blob);

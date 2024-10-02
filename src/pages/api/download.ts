@@ -20,42 +20,21 @@ export default async function handler(
 
     try {
       const agent = ytdl.createAgent(COOKIES);
-      const stream = ytdl(url, { filter: filter, agent });
 
-      stream.on("response", (response) => {
-        console.log("event listener response:", response);
-        res.writeHead(200, {
-          "Content-Type": type === "audio" ? "audio/mpeg" : "video/mp4",
-          "Content-Length": response.headers["content-length"],
+      res.writeHead(200, {
+        "Content-Type": type === "audio" ? "audio/mpeg" : "video/mp4",
+      });
+      ytdl(url, { filter: filter, agent })
+        .pipe(res)
+        .on("finish", () => {
+          console.log("pipe finished");
+          res.end();
+        })
+        .on("error", (error) => {
+          res
+            .status(500)
+            .json({ error: "Error downloading video", description: error });
         });
-      });
-
-      stream.pipe(res)
-      .on("finish", () => {
-        console.log("stream finished");
-        res.end();
-      })
-      .on("error", (error) => {
-        console.log("stream error:", error);
-        res
-          .status(500)
-          .json({ error: "Error downloading video", description: error });
-      });
-
-      // res.writeHead(200, {
-      //       "Content-Type": type === "audio" ? "audio/mpeg" : "video/mp4",
-      //       // "Content-Length": stat.size,
-      //     });
-      // ytdl(url, { filter: filter, agent })
-      //   .pipe(res)
-      //   .on("finish", () => {
-      //     res.end();
-      //   })
-      //   .on("error", (error) => {
-      //     res
-      //       .status(500)
-      //       .json({ error: "Error downloading video", description: error });
-      //   });
     } catch (error) {
       res
         .status(500)
