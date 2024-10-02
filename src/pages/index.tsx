@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const Home = () => {
   const [url, setUrl] = useState("");
   const [downloadUrl, setDownloadUrl] = useState("");
   const [title, setTitle] = useState("");
   const [thumbnail, setThumbnail] = useState("");
-  const [filePath, setFilePath] = useState("");
+  // const [filePath, setFilePath] = useState("");
   const [error, setError] = useState("");
 
   const getDetails = async (url: string) => {
@@ -32,31 +32,42 @@ const Home = () => {
 
   const download = async (type: string) => {
     try {
-      setFilePath("");
+      // setFilePath("");
       const response = await fetch(
         `/api/download?url=${downloadUrl}&type=${type}`
       );
-      const data = await response.json();
       if (response.ok) {
-        setFilePath(data);
+        console.log("response:", response);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        console.log("blob url:", url);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "download";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        console.log("Download successful");
       } else {
-        setError(data.error);
+        setError("Oops something went wrong with the download, please try again later!");
       }
-    } catch {
+    } catch (error) {
+      console.log("error:", error);
       setError("Oops something went wrong, please try again later!");
     }
   };
 
-  useEffect(() => {
-    if (filePath) {
-      console.log(filePath);
-      const a = document.createElement("a");
-      a.href = filePath;
-      a.download = filePath;
-      a.click();
-      setFilePath("");
-    }
-  }, [filePath]);
+  // useEffect(() => {
+  //   if (filePath) {
+  //     console.log(filePath);
+  //     const a = document.createElement("a");
+  //     a.href = filePath;
+  //     a.download = filePath;
+  //     a.click();
+  //     setFilePath("");
+  //   }
+  // }, [filePath]);
 
   return (
     <div className="mt-[10%]">
