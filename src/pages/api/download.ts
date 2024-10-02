@@ -7,7 +7,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { url, type } = req.query;
-  const filter = type === "audio" ? "audio" : "audioandvideo";
+  const filter = type === "audio" ? "audioonly" : "audioandvideo";
 
   if (
     !url ||
@@ -20,21 +20,36 @@ export default async function handler(
 
     try {
       const agent = ytdl.createAgent(COOKIES);
+      const stream = ytdl(url, { filter: filter, agent });
 
-      res.writeHead(200, {
-            "Content-Type": type === "audio" ? "audio/mpeg" : "video/mp4",
-            // "Content-Length": stat.size,
-          });
-      ytdl(url, { filter: filter, agent })
-        .pipe(res)
-        .on("finish", () => {
-          res.end();
-        })
-        .on("error", (error) => {
-          res
-            .status(500)
-            .json({ error: "Error downloading video", description: error });
+      stream.on("response", (response) => {
+        console.log("event listener response:", response);
+        res.writeHead(200, {
+          "Content-Type": type === "audio" ? "audio/mpeg" : "video/mp4",
+          "Content-Length": response.headers["content-length"],
         });
+      });
+
+      stream.pipe(res).on("error", (error) => {
+        res
+          .status(500)
+          .json({ error: "Error downloading video", description: error });
+      });
+
+      // res.writeHead(200, {
+      //       "Content-Type": type === "audio" ? "audio/mpeg" : "video/mp4",
+      //       // "Content-Length": stat.size,
+      //     });
+      // ytdl(url, { filter: filter, agent })
+      //   .pipe(res)
+      //   .on("finish", () => {
+      //     res.end();
+      //   })
+      //   .on("error", (error) => {
+      //     res
+      //       .status(500)
+      //       .json({ error: "Error downloading video", description: error });
+      //   });
     } catch (error) {
       res
         .status(500)
