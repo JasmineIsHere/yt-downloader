@@ -30,7 +30,13 @@ export default async function handler(
         });
       });
 
-      stream.pipe(res).on("error", (error) => {
+      stream.pipe(res)
+      .on("finish", () => {
+        console.log("stream finished");
+        res.end();
+      })
+      .on("error", (error) => {
+        console.log("stream error:", error);
         res
           .status(500)
           .json({ error: "Error downloading video", description: error });
