@@ -2,8 +2,12 @@ import { NextApiRequest, NextApiResponse } from "next";
 import ytdl from "@distube/ytdl-core";
 import * as fs from "fs";
 import { COOKIES } from "@/utils/jsonParser";
+import path from "path";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { url, type } = req.query;
   const filter = type === "audio" ? "audioonly" : "audioandvideo";
   if (
@@ -15,19 +19,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return;
   }
   try {
-    const outputPath = `public/${type === "audio" ? "audio.mp3" : "video.mp4"}`;
+    const outputPath = `${path.join(
+      process.cwd(),
+      "public",
+      type === "audio" ? "audio.mp3" : "video.mp4"
+    )}`;
+    console.log("outputpath:", outputPath);
     const agent = ytdl.createAgent(COOKIES);
 
     ytdl(url, { filter: filter, agent })
-    .pipe(
-      fs.createWriteStream(outputPath))
-    .on("finish", () => {
-      res.status(200).json(outputPath);
-    })
-    .on("error", (error) => {
-      res.status(500).json({ error: "Error downloading video", description: error });
-    });
-  } catch (error) { 
-    res.status(500).json({ error: "Error downloading video", description: error });
+      .pipe(fs.createWriteStream(outputPath))
+      .on("finish", () => {
+        res.status(200).json(outputPath);
+      })
+      .on("error", (error) => {
+        res
+          .status(500)
+          .json({ error: "Error downloading video", description: error });
+      });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error downloading video", description: error });
   }
 }
