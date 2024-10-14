@@ -21,10 +21,12 @@ export default async function handler(
     const videoInfo = await ytdl.getBasicInfo(url, { agent });
     const title = videoInfo.videoDetails.title;
     const thumbnail = videoInfo.videoDetails.thumbnails[0].url;
-    res.status(200).json({ title, thumbnail });
-  } catch {
+    res.status(200).json({ title, thumbnail, videoInfo});
+  } catch (err) {
+    console.log(err)
     res.status(500).json({
       error: "Error converting video, please try again later",
+      description: err,
     });
   }
 }
