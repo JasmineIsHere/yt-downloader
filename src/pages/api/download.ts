@@ -37,7 +37,7 @@ export default async function handler(
     console.log("downloading video; write head");
     ytdl(url, {
       agent,
-      filter: format => format.container === 'mp4',
+      filter: 'videoandaudio',
     })
       .pipe(res)
       .on("finish", () => {
