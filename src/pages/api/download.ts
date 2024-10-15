@@ -38,7 +38,7 @@ export default async function handler(
       ytdl(url, {
         requestOptions: {
           headers: {
-            cookie: COOKIES,
+            cookie: process.env.COOKIES,
           },
         }
       })
