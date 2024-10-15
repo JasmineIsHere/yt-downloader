@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import ytdl from "@distube/ytdl-core";
 import { COOKIES } from "@/utils/jsonParser";
-import { format } from "path";
 
 export default async function handler(
   req: NextApiRequest,
