@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import ytdl from "@distube/ytdl-core";
-// import { COOKIES } from "@/utils/jsonParser";
+import { COOKIES } from "@/utils/jsonParser";
 
 export default async function handler(
   req: NextApiRequest,
@@ -27,43 +27,38 @@ export default async function handler(
     return;
   }
 
-    try {
-      // const agent = ytdl.createAgent(COOKIES);
-      // console.log("downloading video; create agent");
+  try {
+    const agent = ytdl.createAgent(COOKIES);
+    // console.log("downloading video; create agent");
 
-      res.writeHead(200, {
-        "Content-Type": type === "audio" ? "audio/wav" : "video/mp4",
-      });
-      console.log("downloading video; write head");
-      console.log("cookies:", process.env.COOKIES);
-      ytdl(url, {
-        requestOptions: {
-          headers: {
-            cookie: process.env.COOKIES,
-          },
-        }
+    res.writeHead(200, {
+      "Content-Type": type === "audio" ? "audio/wav" : "video/mp4",
+    });
+    console.log("downloading video; write head");
+    ytdl(url, {
+      agent,
+    })
+      .pipe(res)
+      .on("finish", () => {
+        console.log("pipe finished");
+        res.end();
       })
-        .pipe(res)
-        .on("finish", () => {
-          console.log("pipe finished");
-          res.end();
-        })
-        .on("error", (error) => {
-          console.log("pipe error:", error);
-          res
-            .status(500)
-            .json({ error: "Error downloading video", description: error });
-        });
-    } catch (error) {
-      console.log("error:", error);
-      res
-        .status(500)
-        .json({ error: "Error downloading video", description: error });
-    }
+      .on("error", (error) => {
+        console.log("pipe error:", error);
+        res
+          .status(500)
+          .json({ error: "Error downloading video", description: error });
+      });
+  } catch (error) {
+    console.log("error:", error);
+    res
+      .status(500)
+      .json({ error: "Error downloading video", description: error });
+  }
 }
 
 export const config = {
   api: {
     externalResolver: true,
   },
-}
+};
