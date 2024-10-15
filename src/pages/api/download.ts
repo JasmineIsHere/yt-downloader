@@ -1,14 +1,23 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import ytdl from "@distube/ytdl-core";
-import { COOKIES } from "@/utils/jsonParser";
+// import { COOKIES } from "@/utils/jsonParser";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { url, type } = req.query;
-  const filter = type === "audio" ? "audioonly" : "audioandvideo";
-
+  // const filter = type === "audio" ? "audioonly" : "audioandvideo";
+  // const options = {
+  //   filter : filter,
+  //   quality: "highestaudio",
+  //   requestOptions: {
+  //     headers: {
+  //       cookie: COOKIES,
+  //     },
+  //   },
+  // }
+  // { filter: filter, agent, dlChunkSize: 0 }
   if (
     !url ||
     typeof url !== "string" ||
@@ -19,14 +28,14 @@ export default async function handler(
   }
 
     try {
-      const agent = ytdl.createAgent(COOKIES);
-      console.log("downloading video; create agent");
+      // const agent = ytdl.createAgent(COOKIES);
+      // console.log("downloading video; create agent");
 
       res.writeHead(200, {
         "Content-Type": type === "audio" ? "audio/wav" : "video/mp4",
       });
       console.log("downloading video; write head");
-      ytdl(url, { filter: filter, agent, dlChunkSize: 0 })
+      ytdl(url)
         .pipe(res)
         .on("finish", () => {
           console.log("pipe finished");
