@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import ytdl from "@distube/ytdl-core";
-// import { COOKIES } from "@/utils/jsonParser";
+import { COOKIES } from "@/utils/jsonParser";
 
 export default async function handler(
   req: NextApiRequest,
@@ -35,7 +35,13 @@ export default async function handler(
         "Content-Type": type === "audio" ? "audio/wav" : "video/mp4",
       });
       console.log("downloading video; write head");
-      ytdl(url)
+      ytdl(url, {
+        requestOptions: {
+          headers: {
+            cookie: COOKIES,
+          },
+        }
+      })
         .pipe(res)
         .on("finish", () => {
           console.log("pipe finished");
