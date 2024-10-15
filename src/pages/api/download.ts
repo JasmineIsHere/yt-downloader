@@ -20,10 +20,12 @@ export default async function handler(
 
     try {
       const agent = ytdl.createAgent(COOKIES);
+      console.log("downloading video; create agent");
 
       res.writeHead(200, {
         "Content-Type": type === "audio" ? "audio/wav" : "video/mp4",
       });
+      console.log("downloading video; write head");
       ytdl(url, { filter: filter, agent, dlChunkSize: 0 })
         .pipe(res)
         .on("finish", () => {
@@ -31,11 +33,13 @@ export default async function handler(
           res.end();
         })
         .on("error", (error) => {
+          console.log("pipe error:", error);
           res
             .status(500)
             .json({ error: "Error downloading video", description: error });
         });
     } catch (error) {
+      console.log("error:", error);
       res
         .status(500)
         .json({ error: "Error downloading video", description: error });
