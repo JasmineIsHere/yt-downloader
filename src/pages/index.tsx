@@ -21,6 +21,7 @@ const Home = () => {
         setTitle(data.title);
         setThumbnail(data.thumbnail);
         setDownloadUrl(url);
+        console.log("videoInfo:", data.videoInfo);
       } else {
         setError(data.error);
       }

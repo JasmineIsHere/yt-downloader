@@ -17,6 +17,7 @@ export default async function handler(
     return;
   }
   try {
+    // TODO add IP Rotation
     const agent = ytdl.createAgent(COOKIES);
     const videoInfo = await ytdl.getBasicInfo(url, { agent });
     const title = videoInfo.videoDetails.title;
