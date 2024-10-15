@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import ytdl from "@distube/ytdl-core";
 import { COOKIES } from "@/utils/jsonParser";
+import { format } from "path";
 
 export default async function handler(
   req: NextApiRequest,
@@ -37,6 +38,7 @@ export default async function handler(
     console.log("downloading video; write head");
     ytdl(url, {
       agent,
+      filter: format => format.container === 'mp4',
     })
       .pipe(res)
       .on("finish", () => {
