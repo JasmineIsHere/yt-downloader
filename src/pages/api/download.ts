@@ -42,13 +42,20 @@ export default async function handler(
       filter: 'audioandvideo',
       quality: 'highest',
     })
-      .pipe(res)
       .on("info", (info, format) => {
         console.log("pipe info:", info, format);
       })
       .on("progress", (chunkLength, downloaded, total) => {
         console.log("pipe progress: [", chunkLength, "] ", downloaded, "/", total);
       })
+      .on("error", (error) => {
+        console.log("pipe error:", error);
+        res
+          .status(500)
+          .json({ error: "Error downloading video", description: error });
+        res.end();
+      })
+      .pipe(res)
       .on("end", () => {
         console.log("pipe finished");
         res.end();
