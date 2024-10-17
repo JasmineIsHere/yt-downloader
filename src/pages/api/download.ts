@@ -39,7 +39,8 @@ export default async function handler(
     // ytdl.downloadFromInfo(videoInfo, { filter: "audioandvideo", agent }).pipe(res);
     ytdl(url, {
       agent,
-      filter: 'videoandaudio',
+      filter: 'audioandvideo',
+      quality: 'highest',
     })
       .pipe(res)
       .on("info", (info, format) => {
@@ -57,12 +58,14 @@ export default async function handler(
         res
           .status(500)
           .json({ error: "Error downloading video", description: error });
+        res.end();
       });
   } catch (error) {
     console.log("error:", error);
     res
       .status(500)
       .json({ error: "Error downloading video", description: error });
+    res.end();
   }
 }
 
