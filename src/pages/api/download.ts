@@ -30,17 +30,25 @@ export default async function handler(
   try {
     const agent = ytdl.createAgent(COOKIES);
     // console.log("downloading video; create agent");
+    // const videoInfo = await ytdl.getInfo(url, { agent });
 
     res.writeHead(200, {
       "Content-Type": type === "audio" ? "audio/wav" : "video/mp4",
     });
     console.log("downloading video; write head");
+    // ytdl.downloadFromInfo(videoInfo, { filter: "audioandvideo", agent }).pipe(res);
     ytdl(url, {
       agent,
       filter: 'videoandaudio',
     })
       .pipe(res)
-      .on("finish", () => {
+      .on("info", (info, format) => {
+        console.log("pipe info:", info, format);
+      })
+      .on("progress", (chunkLength, downloaded, total) => {
+        console.log("pipe progress: [", chunkLength, "] ", downloaded, "/", total);
+      })
+      .on("end", () => {
         console.log("pipe finished");
         res.end();
       })
