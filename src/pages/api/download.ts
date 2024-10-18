@@ -7,6 +7,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { url, type } = req.query;
+  const { videoInfo } = req.body;
   // const filter = type === "audio" ? "audioonly" : "audioandvideo";
   // const options = {
   //   filter : filter,
@@ -37,7 +38,7 @@ export default async function handler(
     });
     console.log("downloading video; write head");
     // ytdl.downloadFromInfo(videoInfo, { filter: "audioandvideo", agent }).pipe(res);
-    ytdl(url, {
+    ytdl.downloadFromInfo(videoInfo, {
       agent,
       filter: 'audioandvideo',
       quality: 'highest',

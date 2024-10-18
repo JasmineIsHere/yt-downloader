@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+// import ytdl from "@distube/ytdl-core";
 import { useState } from "react";
 
 const Home = () => {
@@ -7,6 +8,7 @@ const Home = () => {
   const [title, setTitle] = useState("");
   const [thumbnail, setThumbnail] = useState("");
   const [error, setError] = useState("");
+  const [videoInfo, setVideoInfo] = useState(null);
 
   const getDetails = async (url: string) => {
     if (error) setError("");
@@ -22,6 +24,14 @@ const Home = () => {
         setThumbnail(data.thumbnail);
         setDownloadUrl(url);
         console.log("videoInfo:", data.videoInfo);
+        setVideoInfo(data.videoInfo);
+        // const formats = data.videoInfo.formats;
+        // formats.filter((format: ytdl.videoFormat) => {
+        //   if (format.mimeType?.includes("video/mp4") && format.hasAudio && format.hasVideo) {
+        //     console.log("format:", format);
+        //     // setVideoUrl(format.url);
+        //   }
+        // });
       } else {
         setError(data.error);
       }
@@ -36,6 +46,10 @@ const Home = () => {
       const response = await fetch(
         `/api/download?url=${downloadUrl}&type=${type}`, {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ videoInfo }),
         }
       );
       if (response.ok) {
@@ -55,6 +69,18 @@ const Home = () => {
       } else {
         setError("Oops something went wrong with the download, please try again later!");
       }
+      // if (type == "video") {
+      //   const blob = await fetch(videoUrl).then((r) => r.blob());
+      //   const url = window.URL.createObjectURL(blob);
+      //   const a = document.createElement("a");
+      //   a.href = url;
+      //   a.download = "download";
+      //   document.body.appendChild(a);
+      //   a.click();
+      //   a.remove();
+      //   window.URL.revokeObjectURL(url);
+      //   console.log("Download successful");
+      // } 
     } catch (error) {
       console.log("error:", error);
       setError("Oops something went wrong, please try again later!");
