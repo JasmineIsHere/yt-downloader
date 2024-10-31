@@ -19,10 +19,10 @@ export default async function handler(
   try {
     // TODO add IP Rotation
     const agent = ytdl.createAgent(COOKIES);
-    const videoInfo = await ytdl.getInfo(url, { agent });
+    const videoInfo = await ytdl.getBasicInfo(url, { agent });
     const title = videoInfo.videoDetails.title;
     const thumbnail = videoInfo.videoDetails.thumbnails[0].url;
-    res.status(200).json({ title, thumbnail, videoInfo});
+    res.status(200).json({ title, thumbnail });
   } catch (err) {
     console.log(err)
     res.status(500).json({
