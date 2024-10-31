@@ -95,7 +95,7 @@ const Home = () => {
         </h1>
         <input
           aria-label="YouTube url"
-          className="rounded-2xl w-1/2 min-w-fit h-fit px-6 py-2"
+          className="rounded-2xl w-1/2 min-w-fit h-fit px-6 py-2 text-black"
           type="text"
           placeholder="Paste YouTube link here"
           onChange={(e) => setUrl(e.target.value)}
