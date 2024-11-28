@@ -21,4 +21,4 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. Or, view the deployed application [https://yt-downloader-rho.vercel.app/](here)
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. 
