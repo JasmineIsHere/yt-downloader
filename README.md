@@ -1,4 +1,7 @@
 ## Project Description
+
+![Web page](./public/yt-downloader.png "Web Page")
+
 This project is built using Next.js, TailwindCSS and Vercel. The application allows users to download YouTube videos in MP4/MP3 format by simply providing the URL of the video. It leverages the power of ytdl-core for fetching video information and downloading the content.
 
 ## License
