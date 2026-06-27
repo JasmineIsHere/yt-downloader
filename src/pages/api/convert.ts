@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import ytdl from "@distube/ytdl-core";
-import { COOKIES } from "@/utils/jsonParser";
+import { ytdlp } from "@/utils/ytdlp";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,18 +15,29 @@ export default async function handler(
     res.status(404).json({ error: "Please provide a valid YouTube URL" });
     return;
   }
+
   try {
-    // TODO add IP Rotation
-    const agent = ytdl.createAgent(COOKIES);
-    const videoInfo = await ytdl.getBasicInfo(url, { agent });
-    const title = videoInfo.videoDetails.title;
-    const thumbnail = videoInfo.videoDetails.thumbnails[0].url;
-    res.status(200).json({ title, thumbnail });
+    const info = await new Promise<{ title: string; thumbnail: string }>(
+      (resolve, reject) => {
+        const proc = ytdlp(url, ["--dump-single-json", "--no-warnings"]);
+        let output = "";
+        proc.stdout.on("data", (chunk) => (output += chunk));
+        proc.stderr.on("data", (chunk) => console.error(chunk.toString()));
+        proc.on("close", (code) => {
+          if (code !== 0) return reject(new Error(`yt-dlp exited with code ${code}`));
+          try {
+            const json = JSON.parse(output);
+            resolve({ title: json.title, thumbnail: json.thumbnail });
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    );
+
+    res.status(200).json(info);
   } catch (err) {
-    console.log(err)
-    res.status(500).json({
-      error: "Error converting video, please try again later",
-      description: err,
-    });
+    console.log(err);
+    res.status(500).json({ error: "Error fetching video info, please try again later" });
   }
 }

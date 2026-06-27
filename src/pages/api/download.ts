@@ -1,13 +1,16 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import ytdl from "@distube/ytdl-core";
-import { COOKIES } from "@/utils/jsonParser";
+import { ytdlp } from "@/utils/ytdlp";
+import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
+import path from "path";
+
+const ffmpegDir = path.dirname(ffmpegInstaller.path);
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { url, type } = req.query;
-  const filter = type === "audio" ? "audioonly" : "audioandvideo";
+
   if (
     !url ||
     typeof url !== "string" ||
@@ -18,34 +21,45 @@ export default async function handler(
   }
 
   try {
-    const agent = ytdl.createAgent(COOKIES);
+    if (type === "audio") {
+      res.writeHead(200, { "Content-Type": "audio/mp3" });
 
-    res.writeHead(200, {
-      "Content-Type": type === "audio" ? "audio/mp3" : "video/mp4",
-    });
-    ytdl(url, {
-      agent,
-      filter: filter,
-      quality: "highest",
-    })
-      .pipe(res)
-      .on("end", () => {
-        console.log("pipe finished");
-        res.end();
-      })
-      .on("error", (error) => {
-        console.log("pipe error:", error);
-        res
-          .status(500)
-          .json({ error: "Error downloading video", description: error });
+      const proc = ytdlp(url, [
+        "--extract-audio",
+        "--audio-format", "mp3",
+        "--audio-quality", "128K",
+        "--ffmpeg-location", ffmpegDir,
+        "--output", "-",
+        "--quiet",
+      ]);
+
+      proc.stdout.pipe(res);
+      proc.stderr.on("data", (chunk) => console.error(chunk.toString()));
+      proc.on("close", () => res.end());
+      proc.on("error", (err) => {
+        console.log("yt-dlp error:", err);
         res.end();
       });
+    } else {
+      res.writeHead(200, { "Content-Type": "video/mp4" });
+
+      const proc = ytdlp(url, [
+        "--format", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+        "--output", "-",
+        "--quiet",
+      ]);
+
+      proc.stdout.pipe(res);
+      proc.stderr.on("data", (chunk) => console.error(chunk.toString()));
+      proc.on("close", () => res.end());
+      proc.on("error", (err) => {
+        console.log("yt-dlp error:", err);
+        res.end();
+      });
+    }
   } catch (error) {
     console.log("error:", error);
-    res
-      .status(500)
-      .json({ error: "Error downloading video", description: error });
-    res.end();
+    res.status(500).json({ error: "Error downloading video" });
   }
 }
 
