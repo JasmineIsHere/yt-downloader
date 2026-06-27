@@ -47,6 +47,7 @@ export default async function handler(
         type: "audio",
         quality: "best",
         format: "any",
+        client: "IOS",
       });
 
       const nodeStream = Readable.fromWeb(stream as Parameters<typeof Readable.fromWeb>[0]);
@@ -68,6 +69,7 @@ export default async function handler(
         type: "video+audio",
         quality: "best",
         format: "mp4",
+        client: "IOS",
       });
 
       const nodeStream = Readable.fromWeb(stream as Parameters<typeof Readable.fromWeb>[0]);
