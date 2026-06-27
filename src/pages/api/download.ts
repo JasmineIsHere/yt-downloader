@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import ytDlp from "yt-dlp-exec";
+import { ytdlp } from "@/utils/ytdlp";
 import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
 import path from "path";
 
@@ -24,16 +24,17 @@ export default async function handler(
     if (type === "audio") {
       res.writeHead(200, { "Content-Type": "audio/mp3" });
 
-      const proc = ytDlp.exec(url, {
-        extractAudio: true,
-        audioFormat: "mp3",
-        audioBitrate: "128",
-        ffmpegLocation: ffmpegDir,
-        output: "-",
-        quiet: true,
-      });
+      const proc = ytdlp(url, [
+        "--extract-audio",
+        "--audio-format", "mp3",
+        "--audio-quality", "128K",
+        "--ffmpeg-location", ffmpegDir,
+        "--output", "-",
+        "--quiet",
+      ]);
 
-      proc.stdout!.pipe(res);
+      proc.stdout.pipe(res);
+      proc.stderr.on("data", (chunk) => console.error(chunk.toString()));
       proc.on("close", () => res.end());
       proc.on("error", (err) => {
         console.log("yt-dlp error:", err);
@@ -42,13 +43,14 @@ export default async function handler(
     } else {
       res.writeHead(200, { "Content-Type": "video/mp4" });
 
-      const proc = ytDlp.exec(url, {
-        format: "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-        output: "-",
-        quiet: true,
-      });
+      const proc = ytdlp(url, [
+        "--format", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+        "--output", "-",
+        "--quiet",
+      ]);
 
-      proc.stdout!.pipe(res);
+      proc.stdout.pipe(res);
+      proc.stderr.on("data", (chunk) => console.error(chunk.toString()));
       proc.on("close", () => res.end());
       proc.on("error", (err) => {
         console.log("yt-dlp error:", err);

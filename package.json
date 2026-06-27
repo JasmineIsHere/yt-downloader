@@ -10,7 +10,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "yt-dlp-exec": "latest",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "next": "14.2.13",
     "react": "^18",
