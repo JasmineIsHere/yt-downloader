@@ -12,6 +12,16 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      keyframes: {
+        loading: {
+          "0%": { transform: "translateX(-100%)" },
+          "50%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+      },
+      animation: {
+        loading: "loading 1.2s ease-in-out infinite",
+      },
     },
   },
   plugins: [],

@@ -6,6 +6,7 @@ const Home = () => {
   const [title, setTitle] = useState("");
   const [thumbnail, setThumbnail] = useState("");
   const [error, setError] = useState("");
+  const [converting, setConverting] = useState(false);
 
   const getDetails = async (url: string) => {
     if (error) setError("");
@@ -14,6 +15,7 @@ const Home = () => {
       return;
     }
     try {
+      setConverting(true);
       const response = await fetch(`/api/convert?url=${url}`);
       const data = await response.json();
       if (response.ok) {
@@ -25,6 +27,8 @@ const Home = () => {
     } catch (error) {
       console.log("error:", error);
       setError("Oops something went wrong, please try again later!");
+    } finally {
+      setConverting(false);
     }
   };
 
@@ -95,11 +99,17 @@ const Home = () => {
         </div>
         <button
           aria-label="convert"
-          className="bg-[#FF0101] text-white rounded-2xl px-6 py-2 text-xl shadow-md"
+          className="bg-[#FF0101] text-white rounded-2xl px-6 py-2 text-xl shadow-md disabled:opacity-60"
+          disabled={converting}
           onClick={() => getDetails(url)}
         >
           Convert
         </button>
+        <div className="w-1/2 min-w-fit" hidden={!converting}>
+          <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-full bg-[#FF0101] rounded-full animate-loading" />
+          </div>
+        </div>
         <button
           aria-label="download"
           className="bg-white text-[#FF0101] rounded-2xl px-6 py-2 text-xl shadow-md disabled:hidden"

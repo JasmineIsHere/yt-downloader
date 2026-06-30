@@ -20,6 +20,10 @@
 .DS_Store
 *.pem
 
+# yt-dlp binaries (platform-specific, not for committing)
+/yt-dlp
+/yt-dlp_macos
+
 # debug
 npm-debug.log*
 yarn-debug.log*
